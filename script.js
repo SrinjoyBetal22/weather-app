@@ -1,9 +1,22 @@
 // Theme Toggle
 const themeToggle = document.getElementById('themeToggle');
+const sunIcon = document.getElementById('sunIcon');
+const moonIcon = document.getElementById('moonIcon');
+
+function updateIcons(theme) {
+    if (theme === 'dark') {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+    } else {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+    }
+}
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
+    updateIcons(savedTheme);
 }
 
 themeToggle.addEventListener('click', () => {
@@ -11,12 +24,14 @@ themeToggle.addEventListener('click', () => {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
+    updateIcons(newTheme);
 });
 
 initTheme();
 
 // Auto-load last city after everything is ready
 window.addEventListener('load', () => {
+    renderFavorites();
     const lastCity = localStorage.getItem('lastCity');
     if (lastCity) {
         cityInput.value = lastCity;
@@ -61,54 +76,22 @@ const weatherCodes = {
     96: 'Thunderstorm with slight hail', 99: 'Thunderstorm with heavy hail',
 };
 
+// Weather Codes Mapping to Remix Icon classes
 const weatherIcons = {
-    0: 'sun', 1: 'sun', 2: 'cloud', 3: 'cloud',
-    45: 'cloud-fog', 48: 'cloud-fog',
-    51: 'cloud-drizzle', 53: 'cloud-drizzle', 55: 'cloud-drizzle',
-    61: 'cloud-rain', 63: 'cloud-rain', 65: 'cloud-rain',
-    71: 'snowflake', 73: 'snowflake', 75: 'snowflake', 77: 'cloud-snow',
-    80: 'cloud-rain', 81: 'cloud-rain', 82: 'cloud-rain',
-    85: 'cloud-snow', 86: 'cloud-snow',
-    95: 'cloud-lightning', 96: 'cloud-lightning', 99: 'cloud-lightning',
+    0: 'ri-sun-line', 1: 'ri-sun-line', 2: 'ri-cloud-line', 3: 'ri-cloudy-line',
+    45: 'ri-foggy-line', 48: 'ri-foggy-line',
+    51: 'ri-drizzle-line', 53: 'ri-drizzle-line', 55: 'ri-drizzle-line',
+    61: 'ri-rainy-line', 63: 'ri-rainy-line', 65: 'ri-heavy-showers-line',
+    71: 'ri-snowy-line', 73: 'ri-snowy-line', 75: 'ri-snowy-line',
+    80: 'ri-rainy-line', 81: 'ri-rainy-line', 82: 'ri-heavy-showers-line',
+    95: 'ri-thunderstorms-line', 96: 'ri-thunderstorms-line', 99: 'ri-thunderstorms-line'
 };
 
-const iconDefaults = {
-    default: 'cloud-sun',
-    night: 'moon',
-    day: 'sun',
-};
-
-// Icon Helper
-function getIconSvg(iconName, size = 24, className = '') {
-    // When using CDN, icons are available via lucide.icons
-    const icon = lucide.icons[iconName];
-    if (!icon) {
-        console.error(`Icon "${iconName}" not found in lucide.icons`);
-        return '';
-    }
-    // lucide.icons[iconName] returns the icon object which has toSvg method
-    return icon.toSvg({ 
-        class: className, 
-        width: size, 
-        height: size,
-        'stroke-width': 2
-    });
-}
+const iconDefaults = { default: 'ri-sun-cloudy-line' };
 
 function updateWeatherIcon(weatherCode, isDay) {
-    let iconName;
-    if (weatherCode <= 1) {
-        iconName = isDay ? iconDefaults.day : iconDefaults.night;
-    } else {
-        iconName = weatherIcons[weatherCode] || iconDefaults.default;
-    }
-    console.log(`Updating icon for code ${weatherCode}, isDay: ${isDay}. Selected icon: ${iconName}`);
-    const iconSvg = getIconSvg(iconName, 48, 'weather-icon-svg');
-    if (iconSvg) {
-        weatherIconLarge.innerHTML = iconSvg;
-    } else {
-        console.error(`Failed to generate SVG for icon: ${iconName}`);
-    }
+    const iconClass = weatherIcons[weatherCode] || iconDefaults.default;
+    weatherIconLarge.innerHTML = `<i class="${iconClass}" style="font-size: 4rem; color: var(--color-primary);"></i>`;
 }
 
 function renderForecast(daily) {
@@ -122,19 +105,20 @@ function renderForecast(daily) {
     days.forEach((date, index) => {
         const d = new Date(date);
         const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-        const code = codes[index];
-        const iconName = weatherIcons[code] || iconDefaults.default;
+        const iconClass = weatherIcons[codes[index]] || iconDefaults.default;
         const high = Math.round(maxTemps[index]);
         const low = Math.round(minTemps[index]);
         
         const dayEl = document.createElement('div');
-        dayEl.className = 'forecast-day';
-        dayEl.style.animationDelay = `${index * 0.1}s`;
+        dayEl.className = 'forecast-card';
+        dayEl.style.animationDelay = `${index * 0.05}s`;
         dayEl.innerHTML = `
-            <div class="forecast-date">${dayName}</div>
-            <div class="forecast-icon">${getIconSvg(iconName, 24, 'forecast-icon-svg')}</div>
-            <div class="forecast-temp-high">${high}°</div>
-            <div class="forecast-temp-low">${low}°</div>
+            <div class="forecast-date" style="font-weight: 600; font-size: 0.875rem; color: var(--color-text-secondary);">${dayName}</div>
+            <i class="${iconClass}" style="font-size: 2rem; color: var(--color-primary);"></i>
+            <div style="margin-top: auto;">
+                <div class="forecast-temp-high" style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800;">${high}°</div>
+                <div class="forecast-temp-low" style="color: var(--color-text-secondary); font-size: 0.875rem; font-weight: 500;">${low}°</div>
+            </div>
         `;
         
         forecastList.appendChild(dayEl);
@@ -190,11 +174,11 @@ function renderFavorites() {
         btn.className = 'fav-btn';
         btn.innerHTML = `
             <span>${fav.name}</span>
-            <i data-lucide="x" class="fav-remove"></i>
+            <i class="ri-close-line fav-remove"></i>
         `;
         btn.onclick = () => {
             cityInput.value = fav.name;
-            fetchFavoriteWeather(fav);
+            getWeather();
         };
         
         const removeBtn = btn.querySelector('.fav-remove');
@@ -203,10 +187,8 @@ function renderFavorites() {
             removeFavorite(fav.name);
         };
         
-favorites.appendChild(btn);
+        favorites.appendChild(btn);
     });
-    
-    lucide.createIcons();
 }
 
 function renderAddFavBtn() {

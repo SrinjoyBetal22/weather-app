@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather</title>
+    <title>Nebula Weather</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,63 +15,67 @@
         <div class="aurora-blob blob-1"></div>
         <div class="aurora-blob blob-2"></div>
     </div>
+    
     <div class="app-shell">
-        <nav class="navbar">
-            <a href="#" class="nav-brand">Weather</a>
-            <button id="themeToggle" class="nav-btn" aria-label="Toggle theme">
-                <i data-lucide="sun"></i>
-                <i data-lucide="moon"></i>
+        <header class="site-header">
+            <a href="#" class="nav-brand">NEBULA</a>
+            <button id="themeToggle" class="btn btn-ghost" aria-label="Toggle theme">
+                <i class="ri-sun-line" id="sunIcon"></i>
+                <i class="ri-moon-line" id="moonIcon" class="hidden"></i>
             </button>
-        </nav>
+        </header>
 
         <main class="app-content">
             <div class="container">
                 <div class="favorites" id="favorites"></div>
                 
                 <div class="search-box">
-                    <input type="text" id="cityInput" placeholder="Search city...">
-                    <button id="searchBtn">
-                        <i data-lucide="search"></i>
+                    <input type="text" id="cityInput" class="input" placeholder="Find your city...">
+                    <button id="searchBtn" class="btn btn-primary">
+                        <i class="ri-search-line"></i>
+                        <span>Search</span>
                     </button>
                 </div>
 
                 <div id="loader" class="loader-container hidden">
                     <span class="loader"></span>
+                    <span class="loader"></span>
+                    <span class="loader"></span>
                 </div>
 
-                <div id="weatherResult" class="weather-result hidden">
-                    <button id="addFavBtn" class="add-fav-btn hidden">
-                        <i data-lucide="star"></i>
-                        <span>Save <span id="favCityName"></span></span>
-                    </button>
+                <div id="weatherResult" class="glass-card weather-card hidden">
+                    <div class="card-header">
+                        <button id="addFavBtn" class="fav-btn hidden">
+                            <i class="ri-star-line"></i>
+                            <span>Save <span id="favCityName"></span></span>
+                        </button>
+                    </div>
                     
-                    <div class="main-card">
-                        <div class="weather-main">
-                            <div class="weather-icon-wrap" id="weatherIconLarge"></div>
-                            <div class="weather-info">
-                                <h2 id="cityName"></h2>
-                                <p id="description" class="weather-desc"></p>
-                                <div class="temp-row">
-                                    <span id="temperature" class="main-temp"></span>
-                                    <span class="weather-meta" id="highLow"></span>
-                                </div>
+                    <div class="weather-main">
+                        <div class="weather-icon-wrap" id="weatherIconLarge"></div>
+                        <div class="weather-info">
+                            <h2 id="cityName" class="city-name"></h2>
+                            <p id="description" class="weather-desc"></p>
+                            <div class="temp-row">
+                                <span id="temperature" class="main-temp"></span>
+                                <span class="weather-meta" id="highLow"></span>
                             </div>
                         </div>
                     </div>
 
                     <div class="details-grid">
                         <div class="detail-item">
-                            <i data-lucide="thermometer"></i>
+                            <i class="ri-temp-hot-line"></i>
                             <span class="label">Feels like</span>
                             <span class="value" id="feelsLike"></span>
                         </div>
                         <div class="detail-item">
-                            <i data-lucide="droplets"></i>
+                            <i class="ri-water-percent-line"></i>
                             <span class="label">Humidity</span>
                             <span class="value" id="humidity"></span>
                         </div>
                         <div class="detail-item">
-                            <i data-lucide="wind"></i>
+                            <i class="ri-windy-line"></i>
                             <span class="label">Wind</span>
                             <span class="value" id="windSpeed"></span>
                         </div>
@@ -79,7 +83,7 @@
                 </div>
 
                 <div id="forecastContainer" class="forecast-container hidden">
-                    <h3 class="forecast-title">5-Day Forecast</h3>
+                    <h3 class="section-title">Next 5 Days</h3>
                     <div id="forecastList" class="forecast-list"></div>
                 </div>
 
@@ -88,6 +92,5 @@
         </main>
     </div>
     <script src="script.js"></script>
-    <script>lucide.createIcons();</script>
 </body>
 </html>
